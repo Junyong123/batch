@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+  <!-- db연결 설정 -->
+<!--   <properties resource="kr/or/ddit/db/mybatis/db.properties"/> -->
+  
+  <!-- vo 별칭 부여 -->
+  <typeAliases>
+  	<typeAlias alias="CycleVO" type="kr.or.ddit.yogult.model.CycleVO"/>
+  	<typeAlias alias="DailyVO" type="kr.or.ddit.yogult.model.DailyVO"/>
+  </typeAliases>
+  
+  <!-- mapper 설정 -->
+  <mappers>
+    <mapper resource="kr/or/ddit/config/db/mapper/yogult.xml"/>
+  </mappers>
+</configuration>
