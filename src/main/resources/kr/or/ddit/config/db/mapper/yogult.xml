@@ -4,28 +4,47 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="yogult">
 	
-	  <select id="getCycle" resultType="cycleVO">
-	  	select * from cycle
-	  </select>
+<!-- 	  <select id="getCycle" resultType="cycleVO"> -->
+<!-- 	  	select * from cycle -->
+<!-- 	  </select> -->
 	  
-	  <insert id ="insertDaily" parameterType="dailyVO">
-	  	insert into daily values (#{cid},#{pid},#{dt},#{cnt})
-	  </insert>
+<!-- 	  <insert id ="insertDaily" parameterType="dailyVO"> -->
+<!-- 	  	insert into daily values (#{cid},#{pid},#{dt},#{cnt}) -->
+<!-- 	  </insert> -->
 	  
-	  <!-- merge 입력하고자 하는 데이터가 존재하면 update 없으면  insert
-	  	   입력하고자 하는 데이터가
-	   -->
-	  <insert id ="mergeDaily" parameterType="dailyVO">
-	  	merge into daily 
-		using dual on( 
-			daily.cid =#{cid} and 
-			daily.pid =#{pid} and 
-			daily.dt =#{dt})
-		<!-- 해당 데이터가 존재 --> 
-		when matched then update set
-			cnt = #{cnt}
-		when not matched then insert
-			(cid,pid,dt,cnt) values (#{cid},#{pid},#{dt},#{cnt})
+<!-- 	  merge 입력하고자 하는 데이터가 존재하면 update 없으면  insert -->
+<!-- 	  	   입력하고자 하는 데이터가 -->
+	  
+<!-- 	  <insert id ="mergeDaily" parameterType="dailyVO"> -->
+<!-- 	  	merge into daily  -->
+<!-- 		using dual on(  -->
+<!-- 			daily.cid =#{cid} and  -->
+<!-- 			daily.pid =#{pid} and  -->
+<!-- 			daily.dt =#{dt}) -->
+		<!-- 해당 데이터가 존재  -->
+<!-- 		when matched then update set -->
+<!-- 			cnt = #{cnt} -->
+<!-- 		when not matched then insert -->
+<!-- 			(cid,pid,dt,cnt) values (#{cid},#{pid},#{dt},#{cnt}) -->
+<!-- 	  </insert> -->
+	  
+	  <!-- 일실적 일괄삭제 -->
+	  <delete id="deleteDailyYm">
+	  	delete daily where dt like #{ym} || '%'
+	  </delete>
+	  
+	  <!-- 일실적 생성 -->
+	  <!-- &lt; == < -->
+	  <insert id="dailyBatchYm">
+	  	insert into daily
+		select cycle.cid,cycle.pid,cal.dt,cycle.cnt
+		from cycle ,         
+		        (select to_char(to_date(#{ym} || '01','yyyyMMdd') + (level-1),'d') day,-- 해당 년월의 요일(숫자), 일자(yyyyMMdd)
+		                to_char(to_date(#{ym} || '01','yyyyMMdd') + (level-1),'yyyyMMdd') dt
+		        from dual
+		        connect by level &lt;= last_day(to_date(#{ym},'yyyyMM'))
+		                -to_date(#{ym} || '01', 'yyyyMMdd')+1) cal
+		where cycle.day = cal.day
 	  </insert>
   
 </mapper>
